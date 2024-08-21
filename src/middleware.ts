@@ -1,17 +1,34 @@
-import { NextResponse, NextRequest } from 'next/server';
-import { getCookie } from './utils/cookies';
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const userToken = getCookie(request, 'userToken');
-  const signInUrl = new URL('/sign-in', request.url);
-  const homeUrl = new URL('/', request.url);
+  const cookieValue = request.cookies.get('chatit')?.value;
 
-  if (!userToken) {
-    if (request.nextUrl.pathname !== '/sign-in') {
+  let jwtToken: string | null = null;
+
+  if (cookieValue) {
+    try {
+      const parsedData = JSON.parse(cookieValue);
+      jwtToken = parsedData?.jwt || null;
+    } catch (error) {
+      jwtToken = null;
+    }
+  }
+  const signInUrl = new URL('/sign-in', request.url);
+  const homeUrl = new URL('/home', request.url);
+  const isHomePage = request.nextUrl.pathname === '/home';
+  const isSignInPage = request.nextUrl.pathname === '/sign-in';
+  const isSignUpPage = request.nextUrl.pathname === '/sign-up';
+  const isHomeWithId = request.nextUrl.pathname.startsWith('/home/');
+
+  console.log(request.nextUrl.pathname);
+
+  if (!jwtToken) {
+    if (!isSignInPage && !isSignUpPage) {
       return NextResponse.redirect(signInUrl);
     }
   } else {
-    if (request.nextUrl.pathname !== '/') {
+    if (!isHomePage && !isHomeWithId) {
       return NextResponse.redirect(homeUrl);
     }
   }
@@ -20,5 +37,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/sign-in'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

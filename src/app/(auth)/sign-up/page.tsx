@@ -19,61 +19,62 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { setCookie } from "@/utils/cookies";
 import { toast } from "sonner";
 import Link from "next/link";
-import { setAuthCookies } from "@/utils/cookie";
 
 export const signInFormSchema = z.object({
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
   password: z.string().min(6, {
     message: "Password must be at least 6 characters long.",
   }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
 });
 
 
-const SignInPage = () => {
+const SignUpPage = () => {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
-      password: "",
+      username: "",
       email: "",
+      password: "",
     },
   })
 
   const onSubmit = async (values: z.infer<typeof signInFormSchema>) => {
 
-
     const strapiData = {
+      username: values.username,
+      email: values.email,
       password: values.password,
-      identifier: values.email,
     }
 
     try {
       const baseUrl: string = process.env.NEXT_PUBLIC_STRAPI_BASE_URL!
-      const response = await axios.post(baseUrl + "/api/auth/local", strapiData, {
+      const response = await axios.post(baseUrl + "/api/auth/local/register", strapiData, {
         headers: {
           "Content-Type": "application/json",
         },
       })
       if (response.status === 200) {
-        setAuthCookies(response.data);
-        router.push("/home");
-        toast.success("Signed in successfully");
+        router.push("/sign-in");
+        toast.success("Account created successfully");
       }
       else {
-        toast.error("Failed to sign in", {
-          description: "Please keep the password and email unique",
+        toast.error("Failed to sign up", {
+          description: "Please keep the username and email unique",
         });
       }
 
       console.log(response)
     } catch (error: any) {
-      console.log(error);
-      console.error("Error creating account:", error.response ? error.response.data : error.message)
-      toast.error("Failed to sign in", {
+      console.log(error)
+      console.error("Error creating account:", error.message ? error.message : "wrong")
+      toast.error("Failed to sign up", {
         description: error?.response?.data?.error?.message ? error.response.data.error.message : "Please keep the username and email unique",
       });
     }
@@ -90,13 +91,27 @@ const SignInPage = () => {
             height={50}
           />
           <div className="flex items-center gap-2">
-            <span>Sign In to</span> <span className="text-primary">ChatIt</span>
+            <span>Sign Up to</span> <span className="text-primary">ChatIt</span>
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your username" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="email"
@@ -126,12 +141,13 @@ const SignInPage = () => {
             />
 
             <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700">
-              Sign In
+              Sign Up
             </Button>
+
             <div className="text-center text-sm text-gray-600">
-              Don't have an account?{" "}
-              <Link href="/sign-up" className="text-primary">
-                Sign Up
+              Already have an account?{" "}
+              <Link href="/sign-in" className="text-primary">
+                Sign In
               </Link>
             </div>
           </form>
@@ -141,4 +157,4 @@ const SignInPage = () => {
   )
 };
 
-export default SignInPage;
+export default SignUpPage;

@@ -21,8 +21,9 @@ export default function CreateNewSession() {
   const { createNewSession } = useChatSessionStore();
 
   const [sessionName, setSessionName] = useState<string>('');
+  const [open, setOpen] = useState<boolean>(false);
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={(val) => setOpen(val)}>
       <DialogTrigger asChild>
         <Button variant="outline" className="p-0 bg-transparent hover:bg-transparent border-0">
           <BiSolidMessageSquareAdd className='text-3xl text-gray-500 hover:text-primary' />
@@ -50,7 +51,7 @@ export default function CreateNewSession() {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={(e) => { e.preventDefault(); createNewSession(sessionName) }}>Save changes</Button>
+          <Button type="submit" onClick={(e) => { e.preventDefault(); createNewSession(sessionName); setOpen(false) }}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

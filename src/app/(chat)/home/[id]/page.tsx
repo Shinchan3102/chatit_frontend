@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
+import { useEffect, useState, FormEvent, useRef } from 'react';
 import Header from '@/components/Message/Header';
 import SentBox from '@/components/Message/SentBox';
-import { ChatSession } from '@/store/useChatSessionStore';
 import { useUserStore } from '@/store/useUserStore';
 import { fetchChatSessionByIdAPI } from '@/utils/chatSession';
 import { createNewMessageApi, fetchChatSessionMessagesAPI } from '@/utils/message';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import { ChatSession } from '@/store/useChatSessionStore';
 
 export type Message = {
   id: string;
@@ -15,24 +15,37 @@ export type Message = {
   content: string;
   createdAt: string;
   updatedAt: string;
-}
+};
+
 export default function Chat({ params }: { params: { id: string } }) {
   const [sessionInfo, setSessionInfo] = useState<ChatSession | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
   const { userInfos, fetchUserDetails } = useUserStore();
-
   const router = useRouter();
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!params.id) return router.push('/home');
+    fetchUserDetails(router);
+  }, [params.id, router, fetchUserDetails]);
+
+  useEffect(() => {
+    if (userInfos?.id && userInfos?.jwtToken) {
+      fetchSessionDetails();
+      fetchMessages();
+      setupWebSocket();
+    }
+  }, [userInfos?.id, userInfos?.jwtToken]);
 
   const fetchSessionDetails = async () => {
     try {
       if (!userInfos?.jwtToken) return;
       const response = await fetchChatSessionByIdAPI(params.id, userInfos.jwtToken);
-
       setSessionInfo(response);
-
     } catch (error) {
-      console.error('Error fetching chats:', error);
+      console.error('Error fetching session details:', error);
     }
   };
 
@@ -46,31 +59,63 @@ export default function Chat({ params }: { params: { id: string } }) {
     }
   };
 
-  const handleSendMessage = async (e: any) => {
+  const handleSendMessage = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      if (!newMessage || !newMessage.trim() || !userInfos?.jwtToken) return;
+      if (!newMessage.trim() || !userInfos?.jwtToken) return;
 
-      const newMessageData: Message = await createNewMessageApi(newMessage, params.id, userInfos.jwtToken);
+      const newMessageData: Message = await createNewMessageApi(newMessage, params.id, userInfos.jwtToken, 'YOU');
       setMessages([...messages, newMessageData]);
 
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(newMessage);
+      } else {
+        console.error('WebSocket is not open.');
+      }
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
 
-  useEffect(() => {
-    if (!params.id) return router.push('/home');
-    fetchUserDetails(router);
-  }, []);
+  const setupWebSocket = () => {
+    if (ws) {
+      ws.close();
+    }
+
+    const socket = new WebSocket('ws://localhost:1337');
+
+    socket.onopen = () => {
+      console.log('WebSocket connection established');
+    };
+
+    socket.onmessage = (event) => {
+      const message = event.data;
+      if (userInfos)
+        createNewMessageApi(message, params.id, userInfos?.jwtToken, 'SERVER');
+      setMessages((prevMessages) => [...prevMessages, {
+        id: Date.now().toString(),
+        user: 'Server',
+        content: message,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }]);
+    };
+
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+
+    setWs(socket);
+  };
 
   useEffect(() => {
-    if (userInfos?.id && userInfos?.jwtToken) {
-      fetchSessionDetails();
-      fetchMessages();
-    }
-  }, [userInfos?.id, userInfos?.jwtToken]);
+    endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   return (
     <div className='w-full'>
@@ -90,9 +135,9 @@ export default function Chat({ params }: { params: { id: string } }) {
                 </div>
               </div>
             ))}
+            <div ref={endOfMessagesRef} />
           </div>
         </div>
-
         <SentBox
           handleSendMessage={handleSendMessage}
           newMessage={newMessage}
@@ -100,5 +145,5 @@ export default function Chat({ params }: { params: { id: string } }) {
         />
       </div>
     </div>
-  )
+  );
 }

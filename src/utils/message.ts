@@ -20,14 +20,14 @@ export const fetchChatSessionMessagesAPI = async (sessionId: string, jwtToken: s
 };
 
 
-export const createNewMessageApi = async (content: string, sessionId: string, jwtToken: string) => {
+export const createNewMessageApi = async (content: string, sessionId: string, jwtToken: string, user: string) => {
   const response = await axios.post(
     `${apiBaseUrl}/api/messages`,
     {
       data: {
         content,
         chat_session: sessionId,
-        user: 'YOU',
+        user,
       },
     },
     {

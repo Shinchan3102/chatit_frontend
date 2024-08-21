@@ -21,8 +21,6 @@ export function middleware(request: NextRequest) {
   const isSignUpPage = request.nextUrl.pathname === '/sign-up';
   const isHomeWithId = request.nextUrl.pathname.startsWith('/home/');
 
-  console.log(request.nextUrl.pathname);
-
   if (!jwtToken) {
     if (!isSignInPage && !isSignUpPage) {
       return NextResponse.redirect(signInUrl);

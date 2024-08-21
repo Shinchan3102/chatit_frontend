@@ -10,14 +10,16 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useChatSessionStore } from "@/store/useChatSessionStore"
 import { useState } from "react"
 import { BiSolidMessageSquareAdd } from "react-icons/bi"
 
 interface CreateNewSessionProps {
-  onSubmit: () => void;
 }
 
-export default function CreateNewSession({ onSubmit }: CreateNewSessionProps) {
+export default function CreateNewSession() {
+  const { createNewSession } = useChatSessionStore();
+
   const [sessionName, setSessionName] = useState<string>('');
   return (
     <Dialog>
@@ -48,7 +50,7 @@ export default function CreateNewSession({ onSubmit }: CreateNewSessionProps) {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={(e) => { e.preventDefault(); onSubmit() }}>Save changes</Button>
+          <Button type="submit" onClick={(e) => { e.preventDefault(); createNewSession(sessionName) }}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

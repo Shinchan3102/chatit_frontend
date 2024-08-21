@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { setCookie } from "@/utils/cookies";
 import { toast } from "sonner";
 import Link from "next/link";
 import { setAuthCookies } from "@/utils/cookie";

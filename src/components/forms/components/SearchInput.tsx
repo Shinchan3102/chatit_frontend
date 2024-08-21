@@ -12,7 +12,6 @@ const SearchInput: React.FC<SearchInputProps> = ({ onSearch, delay = 500 }) => {
   const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
-    // Debounce the search function
     const handler = setTimeout(() => {
       if (searchTerm.trim()) {
         onSearch(searchTerm.trim());
@@ -20,7 +19,6 @@ const SearchInput: React.FC<SearchInputProps> = ({ onSearch, delay = 500 }) => {
       setIsTyping(false);
     }, delay);
 
-    // Cleanup the timeout when the user is still typing
     return () => clearTimeout(handler);
   }, [searchTerm, onSearch, delay]);
 

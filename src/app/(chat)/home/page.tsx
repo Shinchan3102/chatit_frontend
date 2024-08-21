@@ -1,6 +1,5 @@
 import ChatList from '@/components/ChatList/ChatList'
 import Hero from '@/components/Hero'
-import Message from '@/components/Message/Message'
 import React from 'react'
 
 export default function page() {

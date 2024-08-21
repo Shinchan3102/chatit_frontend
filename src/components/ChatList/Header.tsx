@@ -1,32 +1,16 @@
 import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Input } from "@/components/ui/input"
-import { LogOut, MessageSquarePlus } from 'lucide-react'
-import { BiSolidMessageSquareAdd } from 'react-icons/bi'
+import { LogOut } from 'lucide-react'
 import CreateNewSession from '../forms/CreateNewSession'
 import SearchInput from '../forms/components/SearchInput'
 import { useRouter } from 'next/navigation'
 import { clearAuthCookies } from '@/utils/cookie'
 
-interface HeaderProps {
-  onCreateNewChat: (data: string) => void;
-}
-
-export default function Header({ onCreateNewChat }: HeaderProps) {
+export default function Header() {
   const router = useRouter();
 
   const handleSearch = (query: string) => {
     console.log('Searching for:', query);
-  };
-
-  const handleCreateNewSession = () => {
-    const newChatData = {
-      avatarUrl: 'https://via.placeholder.com/50',
-      sessionName: `New Chat ${Date.now()}`,
-      lastMessage: 'This is a new session',
-      time: new Date().toLocaleTimeString(),
-    };
-    onCreateNewChat("new session");
   };
 
   const handleLogout = () => {
@@ -46,7 +30,7 @@ export default function Header({ onCreateNewChat }: HeaderProps) {
       </div>
       <div className='flex gap-4 items-center mb-4'>
         <SearchInput onSearch={handleSearch} />
-        <CreateNewSession onSubmit={handleCreateNewSession} />
+        <CreateNewSession />
       </div>
     </div>
   )

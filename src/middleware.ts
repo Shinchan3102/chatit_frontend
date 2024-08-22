@@ -3,7 +3,6 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const cookieValue = request.cookies.get('chatit')?.value;
-
   let jwtToken: string | null = null;
 
   if (cookieValue) {

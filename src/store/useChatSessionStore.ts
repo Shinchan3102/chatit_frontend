@@ -1,5 +1,3 @@
-// src/store/useChatSessionStore.ts
-
 import { create } from 'zustand';
 import { toast } from 'sonner';
 import { useUserStore } from '@/store/useUserStore';

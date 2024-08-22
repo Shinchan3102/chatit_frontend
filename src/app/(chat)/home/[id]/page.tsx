@@ -88,7 +88,7 @@ export default function Chat({ params }: { params: { id: string } }) {
       ws.close();
     }
 
-    const socket = new WebSocket('ws://localhost:1337');
+    const socket = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_URL!);
 
     socket.onopen = () => {
       console.log('WebSocket connection established');

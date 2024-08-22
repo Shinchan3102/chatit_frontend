@@ -4,7 +4,7 @@ import { FiSearch, FiX } from 'react-icons/fi';
 
 interface SearchInputProps {
   onSearch: (query: string) => void;
-  delay?: number; // Optional delay prop for debouncing
+  delay?: number;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({ onSearch, delay = 500 }) => {

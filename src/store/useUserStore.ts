@@ -19,7 +19,7 @@ export const useUserStore = create<UserStore>((set) => ({
       const jwtToken = getJwtToken();
       const userInfo = getUserFromCookies();
       if (!jwtToken || !userInfo) {
-        router.push('/sign-in'); // Redirect if not logged in
+        router.push('/sign-in');
         return;
       }
       set({ userInfos: { id: userInfo.id, jwtToken, username: userInfo.username, email: userInfo.email } });

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useChatSessionStore } from '@/store/useChatSessionStore';
 import { useParams, useRouter } from 'next/navigation';
+import { formatDateOrTime } from '@/lib/utils';
 
 interface ChatListProps {
   avatarUrl?: string;
@@ -37,7 +38,7 @@ const ChatItem: React.FC<ChatListProps> = ({
             {sessionName}
           </span>
           <span className="text-sm text-gray-500 flex-shrink-0 whitespace-nowrap">
-            {new Date(updatedAt).toLocaleDateString()}
+            {formatDateOrTime(updatedAt)}
           </span>
         </div>
         <p className="text-gray-700 text-sm truncate">{''}</p>

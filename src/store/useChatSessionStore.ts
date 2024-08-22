@@ -23,6 +23,7 @@ type ChatSessionStore = {
   fetchChatSessionById: (id: string) => void;
   createNewSession: (sessionName: string) => void;
   deleteChatSession: (id: string, router: any, isRedirect: boolean) => void;
+  updateChatSession: (id: string, updatedAt: string) => void; 
 };
 
 export const useChatSessionStore = create<ChatSessionStore>((set, get) => ({
@@ -63,6 +64,22 @@ export const useChatSessionStore = create<ChatSessionStore>((set, get) => ({
     } catch (error) {
       console.error('Error creating chat:', error);
       toast.error('Error creating chat');
+    }
+  },
+
+  updateChatSession: (id: string, updatedAt: string) => {
+    const { chats } = get();
+    const updatedChats = chats.map((chat) => 
+      chat.id === id ? { ...chat, updatedAt } : chat
+    );
+
+    const chatToMove = updatedChats.find((chat) => chat.id === id);
+    const remainingChats = updatedChats.filter((chat) => chat.id !== id);
+
+    if (chatToMove) {
+      set({ chats: [chatToMove, ...remainingChats] });
+    } else {
+      console.error('Chat session not found');
     }
   },
 

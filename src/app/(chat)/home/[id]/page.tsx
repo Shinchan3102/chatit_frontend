@@ -7,7 +7,8 @@ import { useUserStore } from '@/store/useUserStore';
 import { fetchChatSessionByIdAPI } from '@/utils/chatSession';
 import { createNewMessageApi, fetchChatSessionMessagesAPI } from '@/utils/message';
 import { useRouter } from 'next/navigation';
-import { ChatSession } from '@/store/useChatSessionStore';
+import { ChatSession, useChatSessionStore } from '@/store/useChatSessionStore';
+import { formatDateOrTime } from '@/lib/utils';
 
 export type Message = {
   id: string;
@@ -25,6 +26,8 @@ export default function Chat({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [ws, setWs] = useState<WebSocket | null>(null);
   const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
+
+  // const { updateChatSession } = useChatSessionStore();
 
   useEffect(() => {
     if (!params.id) return router.push('/home');
@@ -66,6 +69,8 @@ export default function Chat({ params }: { params: { id: string } }) {
 
       const newMessageData: Message = await createNewMessageApi(newMessage, params.id, userInfos.jwtToken, 'YOU');
       setMessages([...messages, newMessageData]);
+
+      // updateChatSession(params.id, newMessageData.updatedAt);
 
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(newMessage);
@@ -131,7 +136,7 @@ export default function Chat({ params }: { params: { id: string } }) {
               <div key={message.id} className={`flex ${message?.user === 'YOU' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-xs shadow-sm p-2 px-3 rounded-lg ${message?.user === 'YOU' ? 'bg-blue-500 text-white' : 'bg-white text-gray-900'}`}>
                   <div>{message.content}</div>
-                  <div className={`text-xs ${message.user === 'YOU' ? 'text-gray-200' : 'text-gray-400'} text-right`}>{new Date(message.createdAt).toDateString()}</div>
+                  <div className={`text-xs ${message.user === 'YOU' ? 'text-gray-200' : 'text-gray-400'} text-right`}>{formatDateOrTime(message.createdAt)}</div>
                 </div>
               </div>
             ))}

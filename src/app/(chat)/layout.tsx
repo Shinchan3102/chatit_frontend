@@ -7,7 +7,7 @@ interface AuthLayoutProps {
 const ChatLayout = ({ children }: AuthLayoutProps) => {
   return (
     <div className="flex h-screen">
-      <div className="hidden sm:block">
+      <div className="hidden sm:contents w-fit">
         <ChatList />
       </div>
       {children}

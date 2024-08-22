@@ -14,8 +14,6 @@ import { useChatSessionStore } from "@/store/useChatSessionStore"
 import { useState } from "react"
 import { BiSolidMessageSquareAdd } from "react-icons/bi"
 
-interface CreateNewSessionProps {
-}
 
 export default function CreateNewSession() {
   const { createNewSession } = useChatSessionStore();

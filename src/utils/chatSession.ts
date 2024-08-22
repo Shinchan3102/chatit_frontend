@@ -4,7 +4,7 @@ import axios from 'axios';
 const apiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_BASE_URL;
 
 export const fetchChatSessionsAPI = async (userId: string, jwtToken: string) => {
-  const response = await axios.get(`${apiBaseUrl}/api/chat-sessions?filters[user]=${userId}`, {
+  const response = await axios.get(`${apiBaseUrl}/api/chat-sessions?filters[user]=${userId}&sort=updatedAt:desc&pagination[pageSize]=100`, {
     headers: {
       Authorization: `Bearer ${jwtToken}`,
     },

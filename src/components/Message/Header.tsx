@@ -7,7 +7,9 @@ import {
 } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { useChatSessionStore } from '@/store/useChatSessionStore';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { GoArrowLeft } from "react-icons/go";
+import Link from 'next/link';
 
 export default function Header({ sessionName, creationDate, id }: { sessionName: string, creationDate: string, id: string }) {
   const { deleteChatSession } = useChatSessionStore();
@@ -18,6 +20,9 @@ export default function Header({ sessionName, creationDate, id }: { sessionName:
   return (
     <div className="flex items-center p-4 border-b border-gray-50 shadow-md bg-white">
       <div className="flex items-center flex-1">
+        <Link href={'/home'} className='mr-2 sm:hidden'>
+          <GoArrowLeft />
+        </Link>
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>U</AvatarFallback>

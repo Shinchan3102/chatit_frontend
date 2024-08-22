@@ -128,7 +128,7 @@ const SignInPage = () => {
               Sign In
             </Button>
             <div className="text-center text-sm text-gray-600">
-              Don't have an account?{" "}
+              Do not have an account?{" "}
               <Link href="/sign-up" className="text-primary">
                 Sign Up
               </Link>

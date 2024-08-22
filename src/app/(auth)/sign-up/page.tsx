@@ -70,7 +70,6 @@ const SignUpPage = () => {
         });
       }
 
-      console.log(response)
     } catch (error: any) {
       console.log(error)
       console.error("Error creating account:", error.message ? error.message : "wrong")

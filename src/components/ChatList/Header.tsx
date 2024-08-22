@@ -5,12 +5,15 @@ import CreateNewSession from '../forms/CreateNewSession'
 import SearchInput from '../forms/components/SearchInput'
 import { useRouter } from 'next/navigation'
 import { clearAuthCookies } from '@/utils/cookie'
+import { useChatSessionStore } from '@/store/useChatSessionStore'
 
 export default function Header() {
   const router = useRouter();
 
+  const { filterChatSessions } = useChatSessionStore();
+
   const handleSearch = (query: string) => {
-    console.log('Searching for:', query);
+    filterChatSessions(query);
   };
 
   const handleLogout = () => {

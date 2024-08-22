@@ -13,9 +13,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ onSearch, delay = 500 }) => {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      if (searchTerm.trim()) {
-        onSearch(searchTerm.trim());
-      }
+      onSearch(searchTerm.trim());
       setIsTyping(false);
     }, delay);
 
@@ -24,7 +22,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ onSearch, delay = 500 }) => {
 
   const handleClear = () => {
     setSearchTerm('');
-    onSearch(''); // Optionally trigger search with an empty value to reset the results
+    onSearch('');
   };
 
   return (
